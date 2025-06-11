@@ -17,6 +17,33 @@ To view the test results visit the [Devzery Dashboard](https://web.devzery.com)
 - **Error Handling**: Comprehensive error handling with detailed logging
 - **Flexible Triggers**: Run tests on push, pull requests, releases, or scheduled intervals
 
+---
+
+### ✅ *Installation*
+
+To start using this GitHub Action in your workflows:
+
+1.⁠ ⁠*Add the action to your workflow YAML file:*
+
+⁠ yaml
+- name: Trigger Backend API
+  uses: your-username/devzery-action@v1
+  with:
+    api-key: ${{ secrets.API_KEY }}
+ ⁠
+
+2.⁠ ⁠*Set your API key securely* in your repository settings under *Settings > Secrets and variables > Actions > New repository secret*.
+
+3.⁠ ⁠*Optional:* Install dependencies and build locally for testing:
+
+⁠ bash
+npm install
+npm run build
+ ⁠
+
+---
+
+
 ## 📋 Inputs
 
 | Input | Description | Required | Default |
@@ -113,7 +140,6 @@ jobs:
 
 - **Never commit API keys** to your repository. Always use [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 - Store your Devzery API key as `DEVZERY_API_KEY` in your repository secrets.
-- The action uses Bearer token authentication: `Authorization: Bearer YOUR_DEVZERY_API_KEY`
 - API keys and sensitive data are never logged or exposed in the workflow output.
 
 ## 🔄 GitHub Context
@@ -170,16 +196,23 @@ npm run build
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ❓ Support
+### ❌ *Roadmap*
 
-- 📚 [Devzery Documentation](https://docs.devzery.com)
-- 🐛 [Issue Tracker](https://github.com/devzery/devzery-action/issues)
-- 💬 [Discussions](https://github.com/devzery/devzery-action/discussions)
-- 🌐 [Devzery Platform](https://devzery.com)
+We’re actively improving the API Trigger GitHub Action. Here’s what we’re planning next:
 
+•⁠  ⁠🔐 Support for additional authentication methods (e.g., Basic Auth, OAuth)
+•⁠  ⁠🔄 Retry mechanism for failed API calls
+•⁠  ⁠🧪 Built-in test API endpoint support
+•⁠  ⁠📦 Marketplace improvements (badges, stats)
+•⁠  ⁠📊 Enhanced response visualization in workflow output
+•⁠  ⁠🧩 Plugin support for common CI/CD tools
+
+Have feature requests? Open an issue or start a discussion on GitHub!
+
+---
 ## 🏷️ Marketplace
 
-This action is available on the [GitHub Marketplace](https://github.com/marketplace/actions/devzery-api-testing). You can also find it by searching for "Devzery API Testing" in the Actions tab of your repository.
+This action is available on the [GitHub Marketplace](). You can also find it by searching for "Devzery API Testing" in the Actions tab of your repository.
 
 ---
 
