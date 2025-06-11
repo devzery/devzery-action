@@ -1,6 +1,6 @@
 {
   "name": "devzery-action",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A reusable GitHub Action to trigger backend APIs with configurable endpoints and authentication",
   "main": "dist/index.js",
   "scripts": {
