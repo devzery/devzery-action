@@ -1,0 +1,52 @@
+name: 'API Trigger Action'
+description: 'A reusable GitHub Action to trigger backend APIs with configurable endpoints and authentication'
+author: 'Devzery'
+branding:
+  icon: 'play'
+  color: 'blue'
+
+inputs:
+  api-url:
+    description: 'The API endpoint URL to trigger (optional - defaults to hardcoded URL)'
+    required: false
+  api-key:
+    description: 'API key for authentication'
+    required: true
+  method:
+    description: 'HTTP method (GET, POST, PUT, DELETE)'
+    required: false
+    default: 'POST'
+  payload:
+    description: 'JSON payload to send with the request (for POST/PUT requests)'
+    required: false
+    default: '{}'
+  headers:
+    description: 'Additional headers as JSON string'
+    required: false
+    default: '{}'
+  timeout:
+    description: 'Request timeout in milliseconds'
+    required: false
+    default: '30000'
+  workflow-config:
+    description: 'Workflow configuration as JSON string'
+    required: false
+    default: '{}'
+  test-config:
+    description: 'Test configuration as JSON string'
+    required: false
+    default: '{}'
+
+outputs:
+  response:
+    description: 'The API response body'
+  status-code:
+    description: 'The HTTP status code of the response'
+  success:
+    description: 'Whether the API call was successful (true/false)'
+  flow-id:
+    description: 'The unique flow ID returned by the backend for tracking'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
