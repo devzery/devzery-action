@@ -16,9 +16,8 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-      - uses: your-username/devzery-action@v1
+      - uses: devzery/devzery-action@v0.1.0
         with:
-          api-url: 'https://api.example.com/webhook'
           api-key: ${{ secrets.API_KEY }}
 ```
 
@@ -38,44 +37,9 @@ jobs:
         run: echo "Deploying application..."
       
       - name: Notify Deployment Service
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         with:
-          api-url: 'https://api.yourservice.com/deployments'
           api-key: ${{ secrets.DEPLOYMENT_API_KEY }}
-          payload: |
-            {
-              "version": "${{ github.event.release.tag_name }}",
-              "environment": "production",
-              "status": "deployed"
-            }
-```
-
-### Health Check with GET Request
-```yaml
-# .github/workflows/health-check.yml
-name: API Health Check
-on:
-  schedule:
-    - cron: '0 */1 * * *'  # Every hour
-
-jobs:
-  health-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check API Health
-        id: health
-        uses: your-username/devzery-action@v1
-        with:
-          api-url: 'https://api.yourservice.com/health'
-          api-key: ${{ secrets.API_KEY }}
-          method: 'GET'
-      
-      - name: Handle Failure
-        if: steps.health.outputs.success != 'true'
-        run: |
-          echo "Health check failed!"
-          echo "Status: ${{ steps.health.outputs.status-code }}"
-          exit 1
 ```
 
 ### Multiple API Calls
@@ -96,7 +60,7 @@ jobs:
     steps:
       - name: Start Deployment
         id: start
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         with:
           api-url: 'https://api.deploy.com/start'
           api-key: ${{ secrets.DEPLOY_API_KEY }}
@@ -108,7 +72,7 @@ jobs:
       
       - name: Update Status
         if: steps.start.outputs.success == 'true'
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         with:
           api-url: 'https://api.status.com/update'
           api-key: ${{ secrets.STATUS_API_KEY }}
@@ -133,7 +97,7 @@ jobs:
     steps:
       - name: Call API with Retry
         id: api
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         continue-on-error: true
         with:
           api-url: 'https://api.example.com/webhook'
@@ -155,7 +119,7 @@ jobs:
       
       - name: Retry API Call
         if: steps.api.outputs.success != 'true'
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         with:
           api-url: 'https://api.example.com/webhook'
           api-key: ${{ secrets.API_KEY }}
@@ -175,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call API with Custom Headers
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v0.1.0
         with:
           api-url: 'https://api.example.com/data'
           api-key: ${{ secrets.API_KEY }}
