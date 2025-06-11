@@ -19,27 +19,27 @@ To view the test results visit the [Devzery Dashboard](https://web.devzery.com)
 
 ---
 
-### ✅ *Installation*
+### ✅ Installation
 
 To start using this GitHub Action in your workflows:
 
-1.⁠ ⁠*Add the action to your workflow YAML file:*
+1. **Add the action to your workflow YAML file:**
 
-⁠ yaml
+```yaml
 - name: Trigger Backend API
-  uses: your-username/devzery-action@v1
+  uses: devzery/devzery-action@v1
   with:
     api-key: ${{ secrets.API_KEY }}
- ⁠
+```
 
-2.⁠ ⁠*Set your API key securely* in your repository settings under *Settings > Secrets and variables > Actions > New repository secret*.
+2. **Set your API key securely** in your repository settings under *Settings > Secrets and variables > Actions > New repository secret*.
 
-3.⁠ ⁠*Optional:* Install dependencies and build locally for testing:
+3. **Optional:** Install dependencies and build locally for testing:
 
-⁠ bash
+```bash
 npm install
 npm run build
- ⁠
+```
 
 ---
 
