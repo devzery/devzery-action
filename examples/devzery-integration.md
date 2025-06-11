@@ -19,32 +19,9 @@ jobs:
       
       - name: Trigger Devzery Backend API
         id: devzery-trigger
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v1
         with:
           api-key: ${{ secrets.DEVZERY_API_KEY }}
-          workflow-config: |
-            {
-              "environment": "production",
-              "test_suite": "regression",
-              "parallel_execution": true,
-              "max_retries": 3
-            }
-          test-config: |
-            {
-              "browser": "chrome",
-              "viewport": "1920x1080",
-              "timeout": 30000,
-              "headless": true,
-              "tags": ["smoke", "critical"]
-            }
-          payload: |
-            {
-              "trigger_source": "github_action",
-              "repository_url": "${{ github.repository }}",
-              "branch": "${{ github.ref_name }}",
-              "commit_sha": "${{ github.sha }}",
-              "pr_number": "${{ github.event.number }}"
-            }
           timeout: 60000
       
       - name: Output Flow Information
@@ -84,21 +61,9 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     steps:
       - name: Trigger Post-Deployment Tests
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v1
         with:
           api-key: ${{ secrets.DEVZERY_API_KEY }}
-          workflow-config: |
-            {
-              "environment": "${{ github.event.deployment.environment }}",
-              "test_suite": "post_deployment",
-              "priority": "high"
-            }
-          test-config: |
-            {
-              "base_url": "${{ github.event.deployment.payload.web_url }}",
-              "verify_ssl": true,
-              "follow_redirects": true
-            }
 ```
 
 ## Conditional Execution
@@ -127,12 +92,7 @@ jobs:
       
       - name: Trigger Devzery API Tests
         if: steps.should-run.outputs.skip != 'true'
-        uses: your-username/devzery-action@v1
+        uses: devzery/devzery-action@v1
         with:
           api-key: ${{ secrets.DEVZERY_API_KEY }}
-          workflow-config: |
-            {
-              "triggered_by": "conditional_push",
-              "commit_message": "${{ github.event.head_commit.message }}"
-            }
 ```
