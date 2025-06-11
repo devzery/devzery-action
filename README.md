@@ -1,113 +1,99 @@
-# API Trigger Action
+# Devzery API Testing Action
 
-[![GitHub marketplace](https://img.shields.io/badge/marketplace-api--trigger--action-blue?logo=github)](https://github.com/marketplace/actions/api-trigger-action)
-[![CI](https://github.com/your-username/devzery-action/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/devzery-action/actions/workflows/ci.yml)
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-devzery--api--testing-blue?logo=github)](https://github.com/marketplace/actions/devzery-api-testing)
+[![CI](https://github.com/devzery/devzery-action/actions/workflows/ci.yml/badge.svg)](https://github.com/devzery/devzery-action/actions/workflows/ci.yml)
 
-A powerful and flexible GitHub Action that allows you to trigger backend APIs from your GitHub workflows. Perfect for integrating CI/CD pipelines with external services, triggering deployments, sending notifications, or calling any REST API endpoint.
+A GitHub Action that automatically triggers API tests on the Devzery testing platform. Seamlessly integrate API testing into your CI/CD pipeline by running comprehensive API test suites whenever code changes are pushed to your repository.
+
+To view the test results visit the [Devzery Dashboard](https://web.devzery.com)
 
 ## 🚀 Features
 
-- **Flexible HTTP Methods**: Support for GET, POST, PUT, DELETE requests
-- **Secure Authentication**: Built-in support for Bearer token authentication
-- **Rich Context**: Automatically includes GitHub workflow context in requests
-- **Customizable Headers**: Add custom headers to your requests
+- **Automated API Testing**: Trigger comprehensive API test suites on the Devzery platform
+- **CI/CD Integration**: Seamlessly integrate API testing into your GitHub workflows
+- **Secure Authentication**: Built-in support for Devzery API key authentication
+- **Test Configuration**: Support for custom test and workflow configurations
+- **Real-time Results**: Get detailed test results and flow tracking
 - **Error Handling**: Comprehensive error handling with detailed logging
-- **Timeout Control**: Configurable request timeouts
-- **Response Outputs**: Access response data in subsequent workflow steps
+- **Flexible Triggers**: Run tests on push, pull requests, releases, or scheduled intervals
 
 ## 📋 Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `api-url` | The API endpoint URL to trigger (optional - uses hardcoded URL if not provided) | ❌ | `https://your-backend-domain.com/github/run` |
-| `api-key` | API key for authentication | ✅ | - |
-| `method` | HTTP method (GET, POST, PUT, DELETE) | ❌ | `POST` |
-| `payload` | JSON payload to send with the request | ❌ | `{}` |
+| `api-key` | Your Devzery API key for authentication | ✅ | - |
+| `payload` | Additional JSON payload to send with the test trigger | ❌ | `{}` |
 | `headers` | Additional headers as JSON string | ❌ | `{}` |
 | `timeout` | Request timeout in milliseconds | ❌ | `30000` |
-| `workflow-config` | Workflow configuration as JSON string | ❌ | `{}` |
-| `test-config` | Test configuration as JSON string | ❌ | `{}` |
+| `workflow-config` | Devzery workflow configuration as JSON string | ❌ | `{}` |
+| `test-config` | Devzery test configuration as JSON string | ❌ | `{}` |
 
 ## 📤 Outputs
 
 | Output | Description |
 |--------|-------------|
-| `response` | The API response body |
 | `status-code` | The HTTP status code of the response |
-| `success` | Whether the API call was successful (true/false) |
-| `flow-id` | The unique flow ID returned by the backend for tracking |
+| `success` | Whether the API test execution was successful (true/false) |
+| `flow-id` | The unique flow ID returned by Devzery for tracking test execution |
 
 ## 🛠️ Usage
 
 ### Basic Example
 
 ```yaml
-name: Trigger API on Push
+name: Run API Tests on Push
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
-  trigger-api:
+  api-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Backend API
-        uses: your-username/devzery-action@v1
+      - name: Trigger Devzery API Tests
+        uses: devzery/devzery-action@v1
         with:
-          api-key: ${{ secrets.API_KEY }}
-          method: 'POST'
-          payload: |
-            {
-              "event": "deployment",
-              "branch": "${{ github.ref_name }}",
-              "commit": "${{ github.sha }}"
-            }
+          api-key: ${{ secrets.DEVZERY_API_KEY }}
 ```
 
-### Advanced Example with Custom Headers
+### Advanced Example with Test Configuration
 
 ```yaml
-name: Advanced API Integration
+name: Comprehensive API Testing
 on:
+  pull_request:
+    branches: [ main ]
   release:
     types: [published]
 
 jobs:
-  notify-services:
+  devzery-api-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Release Service
-        uses: your-username/devzery-action@v1
+      - name: Run Devzery API Test Suite
+        id: api-tests
+        uses: devzery/devzery-action@v1
         with:
-          api-key: ${{ secrets.API_KEY }}
-          method: 'POST'
-          headers: |
-            {
-              "X-Service-Version": "2.0",
-              "X-Request-ID": "${{ github.run_id }}"
-            }
-          payload: |
-            {
-              "release_tag": "${{ github.event.release.tag_name }}",
-              "release_name": "${{ github.event.release.name }}",
-              "release_body": "${{ github.event.release.body }}",
-              "draft": ${{ github.event.release.draft }},
-              "prerelease": ${{ github.event.release.prerelease }}
-            }
-          timeout: 60000
+          api-key: ${{ secrets.DEVZERY_API_KEY }}
+          timeout: 120000
 
-      - name: Handle API Response
+      - name: Process Test Results
         if: always()
         run: |
-          echo "API call status: ${{ steps.notify-services.outputs.success }}"
-          echo "Status code: ${{ steps.notify-services.outputs.status-code }}"
-          echo "Response: ${{ steps.notify-services.outputs.response }}"
+          echo "Test execution status: ${{ steps.api-tests.outputs.success }}"
+          echo "Flow ID for tracking: ${{ steps.api-tests.outputs.flow-id }}"
+          echo "Response: ${{ steps.api-tests.outputs.response }}"
+          
+          if [ "${{ steps.api-tests.outputs.success }}" = "false" ]; then
+            echo "API tests failed! Check Devzery dashboard for details."
+            exit 1
+          fi
 ```
 
-### GET Request Example
+### Scheduled API Testing
 
 ```yaml
-name: Health Check
+name: Scheduled API Health Check
 on:
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
@@ -116,27 +102,29 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Check API Health
-        uses: your-username/devzery-action@v1
+      - name: Run Devzery Health Check Tests
+        uses: devzery/devzery-action@v1
         with:
-          api-key: ${{ secrets.API_KEY }}
-          method: 'GET'
-          timeout: 10000
+          api-key: ${{ secrets.DEVZERY_API_KEY }}
+          timeout: 60000
 ```
 
 ## 🔒 Security
 
 - **Never commit API keys** to your repository. Always use [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
-- The action uses Bearer token authentication by default: `Authorization: Bearer YOUR_API_KEY`
+- Store your Devzery API key as `DEVZERY_API_KEY` in your repository secrets.
+- The action uses Bearer token authentication: `Authorization: Bearer YOUR_DEVZERY_API_KEY`
 - API keys and sensitive data are never logged or exposed in the workflow output.
 
 ## 🔄 GitHub Context
 
-When using POST or PUT methods, the action automatically includes GitHub workflow context in the payload:
+When triggering API tests, the action automatically includes GitHub workflow context in the payload sent to Devzery:
 
 ```json
 {
   "your_custom_payload": "here",
+  "workflow_config": {},
+  "test_config": {},
   "github_context": {
     "repository": {
       "owner": "your-username",
@@ -145,8 +133,8 @@ When using POST or PUT methods, the action automatically includes GitHub workflo
     "ref": "refs/heads/main",
     "sha": "abc123...",
     "actor": "username",
-    "workflow": "CI/CD Pipeline",
-    "job": "deploy",
+    "workflow": "API Testing Pipeline",
+    "job": "api-tests",
     "run_id": 123456789,
     "run_number": 42,
     "event_name": "push"
@@ -163,25 +151,12 @@ npm install
 npm run build
 ```
 
-### Testing Locally
-
-1. Set up your environment variables:
-```bash
-export INPUT_API_URL="https://httpbin.org/post"
-export INPUT_API_KEY="test-key"
-export INPUT_METHOD="POST"
-export INPUT_PAYLOAD='{"test": "data"}'
-```
-
-2. Run the action:
-```bash
-node dist/index.js
-```
 
 ## 📋 Requirements
 
 - Node.js 20+
-- The target API endpoint should support the authentication method you're using
+- A valid Devzery account and API key
+- Properly configured API endpoints and tests in your Devzery dashboard
 
 ## 🤝 Contributing
 
@@ -197,14 +172,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ❓ Support
 
-- 📚 [Documentation](https://github.com/your-username/devzery-action/wiki)
-- 🐛 [Issue Tracker](https://github.com/your-username/devzery-action/issues)
-- 💬 [Discussions](https://github.com/your-username/devzery-action/discussions)
+- 📚 [Devzery Documentation](https://docs.devzery.com)
+- 🐛 [Issue Tracker](https://github.com/devzery/devzery-action/issues)
+- 💬 [Discussions](https://github.com/devzery/devzery-action/discussions)
+- 🌐 [Devzery Platform](https://devzery.com)
 
 ## 🏷️ Marketplace
 
-This action is available on the [GitHub Marketplace](https://github.com/marketplace/actions/api-trigger-action). You can also find it by searching for "API Trigger" in the Actions tab of your repository.
+This action is available on the [GitHub Marketplace](https://github.com/marketplace/actions/devzery-api-testing). You can also find it by searching for "Devzery API Testing" in the Actions tab of your repository.
 
 ---
 
-Made with ❤️ by [Devzery](https://github.com/your-username)
+Made with ❤️ by [Devzery](https://devzery.com)
